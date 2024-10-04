@@ -11,9 +11,10 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
-    "oracledb": "^6.5.0"
+    "oracledb": "^6.5.0",
+    "servintereportsbackend": "file:"
   }
 }
