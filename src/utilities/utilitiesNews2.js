@@ -8,10 +8,9 @@ function validacionNews2(signosVitales) {
     validacionTemperatura(signosVitales.temperatura) +
     isAlerta(signosVitales.Conciencia);
 
-  /*
   console.log(validarFrecuenciaRespiratoria(signosVitales.frecuenciaRespiratoria) + ' VALIDACION FRECUENCIA RESPIRATORIA-- \n'+ 
   validarFrecuenciaCardiaca(signosVitales.frecuenciaCardiaca) +' VALIDACION FRECUENCIA CARDIACA-- \n' + 
-  valdarTensionArterial(signosVitales.sistolica) + ' VALIDACION TENSION ARTERIAL-- \n' +
+  valdarTensionArterial(signosVitales.sistolica) + ' VALIDACION TENSION ARTERIAL-- ' + signosVitales.sistolica + '\n' + 
   isAlerta(signosVitales.Conciencia) + ' VALIDACION CONCIENCIA-- \n' +
   validarFIO2(signosVitales.FIO2) + ' VALIDACION FIO2-- \n' + 
   validarSaturacionOxigeno(signosVitales.SO2, signosVitales.FIO2) + ' VALIDACION SATURACION DE OXIGENO -- \n' +
@@ -19,7 +18,7 @@ function validacionNews2(signosVitales) {
   validacionTemperatura(signosVitales.temperatura)+ ' VALIDACION TEMPERATURA--');
   console.log(news2 + '-----------------------------------------------------------------------------------------');
   console.log(isAlerta(signosVitales.Conciencia) + "..... Conciencia -- " + " -- " + signosVitales.Conciencia);
-  */
+  
   return news2;
 }
 
@@ -146,5 +145,7 @@ function validacionTemperatura(temperatura) {
     return 0;
   }
 }
+
+
 
 module.exports = { validacionNews2 };

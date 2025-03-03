@@ -41,8 +41,8 @@ router.get('/signospaciente/:pacepi', async (req, res) => {
     sql = `select * from (select * from BASDAT.SIGNOS_VITALES_NEWS2 WHERE regcliepi = '` + req.params.pacepi + `' AND SISTOLICA IS NOT NULL AND FIO2 IS NOT NULL AND SO2 IS NOT NULL  ORDER BY REGCLIFEG DESC) where ROWNUM <= 1`;
     let result = await BD.Open(sql, [], false);
     pacientes = {};
-   result.rows.map(paciente => {
-         if(paciente[11] != null && paciente[12] != null && paciente[9] != null && paciente[8] != null && pacientes != {}){
+    result.rows.map(paciente => {
+        if (paciente[11] != null && paciente[12] != null && paciente[9] != null && paciente[8] != null && pacientes != {}) {
             let pacienteSchema = {
                 "regclisec": paciente[0],
                 "regcliepi": paciente[1],
@@ -54,17 +54,31 @@ router.get('/signospaciente/:pacepi', async (req, res) => {
                 "presionArterialMedia": paciente[7],
                 "frecuenciaCardiaca": paciente[8],
                 "frecuenciaRespiratoria": paciente[9],
-                "temperatura": paciente[10],
+                "temperatura": CorreccionTemperatura(paciente[10]),
                 "FIO2": paciente[11],
                 "SO2": paciente[12],
                 "Conciencia": paciente[13],
-                "new2" : 0
+                "new2": 0
             }
             pacienteSchema.new2 = validacionNews2.validacionNews2(pacienteSchema);
             pacientes = pacienteSchema;
-        } 
+        }
     })
     res.json(pacientes);
 })
+
+function CorreccionTemperatura(cadena) {
+    if (cadena != null && cadena != '') {
+        let cadenaLimpia = cadena.replace(/\s+/g, '');
+        let numero = parseFloat(cadenaLimpia);
+        if (isNaN(numero)) {
+            throw new Error('No se pudo convertir la cadena a número');
+        }
+        return numero;
+    }else{
+        return '';
+    }
+}
+
 
 module.exports = router;
