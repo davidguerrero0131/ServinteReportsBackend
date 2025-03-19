@@ -1,4 +1,4 @@
-function validacionObstetricScale(signosVitales) {
+function validacionPediatricScale(signosVitales) {
     obstetricScale =
       validarSaturacionOxigeno(signosVitales.SO2, signosVitales.FIO2) +
       validarFIO2(signosVitales.FIO2) +
@@ -130,14 +130,16 @@ function validacionObstetricScale(signosVitales) {
   
   function validacionTemperatura(temperatura) {
     if (temperatura != 0 && temperatura != undefined && temperatura != null) {
-      if (temperatura < 34 || temperatura >= 39) {
+      if (temperatura <= 35) {
         return 3;
-      }  else if (
-        (temperatura >= 34 && temperatura <= 35) ||
-        (temperatura >= 38 && temperatura < 39)
+      } else if (temperatura > 39) {
+        return 2;
+      } else if (
+        (temperatura > 35 && temperatura <= 36) ||
+        (temperatura > 38 && temperatura <= 39)
       ) {
         return 1;
-      } else if (temperatura > 35 && temperatura < 38) {
+      } else if (temperatura > 36 && temperatura <= 38) {
         return 0;
       }
     } else {
@@ -145,5 +147,5 @@ function validacionObstetricScale(signosVitales) {
     }
   }
   
-  module.exports = { validacionObstetricScale };
+  module.exports = { validacionPediatricScale };
   
