@@ -4,7 +4,7 @@ function validacionObstetricScale(signosVitales) {
       validarFIO2(signosVitales.FIO2) +
       validarFrecuenciaRespiratoria(signosVitales.frecuenciaRespiratoria) +
       validarFrecuenciaCardiaca(signosVitales.frecuenciaCardiaca) +
-      valdarTensionArterial(signosVitales.sistolica) +
+      validarPresionArterialSistolica(signosVitales.sistolica) +
       validacionTemperatura(signosVitales.temperatura) +
       isAlerta(signosVitales.Conciencia);
   
@@ -29,13 +29,13 @@ function validacionObstetricScale(signosVitales) {
       frecuenciaRespiratoria != undefined &&
       frecuenciaRespiratoria != null
     ) {
-      if (frecuenciaRespiratoria <= 8 || frecuenciaRespiratoria >= 25) {
+      if (frecuenciaRespiratoria < 10 || frecuenciaRespiratoria >= 30) {
         return 3;
-      } else if (frecuenciaRespiratoria >= 21 && frecuenciaRespiratoria <= 24) {
+      } else if (frecuenciaRespiratoria >= 25 && frecuenciaRespiratoria <= 29) {
         return 2;
-      } else if (frecuenciaRespiratoria >= 9 && frecuenciaRespiratoria <= 11) {
+      } else if (frecuenciaRespiratoria >= 18 && frecuenciaRespiratoria <= 24) {
         return 1;
-      } else if (frecuenciaRespiratoria >= 12 && frecuenciaRespiratoria <= 20) {
+      } else if (frecuenciaRespiratoria >= 10 && frecuenciaRespiratoria <= 17) {
         return 0;
       }
     } else {
@@ -98,19 +98,39 @@ function validacionObstetricScale(signosVitales) {
     }
   }
   
-  function valdarTensionArterial(tensionArterial) {
+  function validarPresionArterialSistolica(PresionArterialSistolica) {
     if (
-      tensionArterial != 0 &&
-      tensionArterial != undefined &&
-      tensionArterial != null
+      PresionArterialSistolica != 0 &&
+      PresionArterialSistolica != undefined &&
+      PresionArterialSistolica != null
     ) {
-      if (tensionArterial <= 90 || tensionArterial >= 220) {
+      if (PresionArterialSistolica <= 80 || PresionArterialSistolica >= 160) {
         return 3;
-      } else if (tensionArterial >= 91 && tensionArterial <= 100) {
+      } else if ((PresionArterialSistolica >= 80 && PresionArterialSistolica < 90) || (PresionArterialSistolica >= 150 && PresionArterialSistolica < 160)) {
         return 2;
-      } else if (tensionArterial >= 101 && tensionArterial <= 110) {
+      } else if (PresionArterialSistolica >= 140 && PresionArterialSistolica < 149) {
         return 1;
-      } else if (tensionArterial >= 111 && tensionArterial <= 219) {
+      } else if (PresionArterialSistolica >= 90 && PresionArterialSistolica < 140) {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  function validarPresionArterialDiastolica(tensionArterialDiastolica) {
+    if (
+      tensionArterialDiastolica != 0 &&
+      tensionArterialDiastolica != undefined &&
+      tensionArterialDiastolica != null
+    ) {
+      if (tensionArterialDiastolica >= 110) {
+        return 3;
+      } else if (tensionArterialDiastolica >= 100 && tensionArterialDiastolica < 109) {
+        return 2;
+      } else if (tensionArterialDiastolica >= 90 && tensionArterialDiastolica < 99) {
+        return 1;
+      } else if (tensionArterialDiastolica < 90) {
         return 0;
       }
     } else {
