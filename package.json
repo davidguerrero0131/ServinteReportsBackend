@@ -14,7 +14,7 @@
     "express": "^4.21.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
-    "oracledb": "^6.5.0",
+    "oracledb": "^6.9.0",
     "servintereportsbackend": "file:"
   }
 }
