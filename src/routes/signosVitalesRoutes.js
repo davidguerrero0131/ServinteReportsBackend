@@ -17,28 +17,6 @@ router.get('/ubicacionesconpacientes', async (req, res) => {
     res.json(ubicaciones);
 });
 
-router.get('/pacientescirugia', async (req, res) =>{
-    sql = `select pacap1, pacap2, pacnom, epiactepi, epiacthis, epiactubi, ubinom, epiacthab, epiactutr from basdat.hiepiact join basdat.abpac on pachis = epiacthis JOIN BASDAT.INUBI ON ubicod = epiactubi WHERE EPIACTUBI IN ('P204', 'P2CA', 'P206')`
-    let result = await BD.Open(sql, [], false);
-    pacientes = [];
-    result.rows.map(paciente =>{
-        let pacienteTmp = {
-            "primerApellido": paciente[0],
-            "segundoApellido": paciente[1],
-            "nombre": paciente[2],
-            "episodio" : paciente[3],
-            "historia" : paciente[4],
-            "CodigoUbicacion": paciente[5],
-            "nombreUbicacion": paciente[6],
-            "nombreHabitacion": paciente[7],
-            "ubicacionTransitoria": paciente[8]
-        }
-        pacientes.push(pacienteTmp);
-    })
-    res.json(pacientes);
-})
-
-
 router.get('/pascientesubicacion/:ubicod', async (req, res) => {
     sql = `select pacap1, pacap2, pacnom, epiactepi, epiacthis, epiactubi, epiacthab from basdat.hiepiact join basdat.abpac on pachis = epiacthis  WHERE EPIACTUBI = '` + req.params.ubicod + `'`;
     let result = await BD.Open(sql, [], false);
@@ -76,7 +54,7 @@ router.get('/signospaciente/:pacepi', async (req, res) => {
                 "presionArterialMedia": paciente[8],
                 "frecuenciaCardiaca": paciente[9],
                 "frecuenciaRespiratoria": paciente[10],
-                "temperatura": CorreccionTemperatura(paciente[11]),
+                "temperatura": correccionTemperatura(paciente[11]),
                 "FIO2": paciente[12],
                 "SO2": paciente[13],
                 "Conciencia": paciente[14],
@@ -89,7 +67,7 @@ router.get('/signospaciente/:pacepi', async (req, res) => {
     res.json(pacientes);
 })
 
-function CorreccionTemperatura(cadena) {
+function correccionTemperatura(cadena) {
     if (cadena != null && cadena != '') {
         let cadenaLimpia = cadena.replace(/\s+/g, '');
         let numero = parseFloat(cadenaLimpia);

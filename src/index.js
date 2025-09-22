@@ -5,6 +5,7 @@ const app = express();
 
 const reportsRoutes = require('./routes/reportsRoutes');
 const signosVitalesRoutes = require('./routes/signosVitalesroutes');
+const pacientescirugiaRoutes = require('./routes/pacientesCirugiaRoutes');
 
 //settings
 app.set('port', 3002);
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(reportsRoutes);
 app.use(signosVitalesRoutes);
+app.use(pacientescirugiaRoutes);
 
 //run
 app.listen(app.get('port'), () => {
