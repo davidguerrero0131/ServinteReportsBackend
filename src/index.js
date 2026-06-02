@@ -6,6 +6,7 @@ const app = express();
 const reportsRoutes = require('./routes/reportsRoutes');
 const signosVitalesRoutes = require('./routes/signosVitalesroutes');
 const pacientescirugiaRoutes = require('./routes/pacientesCirugiaRoutes');
+const citasMadreCanguro = require('./routes/citasMadreCanguro');
 
 //settings
 app.set('port', 3002);
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(reportsRoutes);
 app.use(signosVitalesRoutes);
 app.use(pacientescirugiaRoutes);
+app.use(citasMadreCanguro);
 
 //run
 app.listen(app.get('port'), () => {
