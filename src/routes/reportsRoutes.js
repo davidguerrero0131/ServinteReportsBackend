@@ -10,7 +10,7 @@ router.get('/EntidadPaciente/:id', async (req, res) => {
     --inner join inempdet on  empcod=empdetcod
     where  empact='S'
     --carano ='2023' and movmes ='06'
-    and pacide
+    and pachis
      in (
         '` + req.params['id'] + `') `;
 
@@ -52,6 +52,54 @@ router.get('/Entidad/:nom', async (req, res) => {
 
     res.json(entidad);
 })
+
+
+
+router.post('/datosentidad', async (req, res) => {
+    
+
+    const { nombre } = req.body;
+
+    if (!nombre) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "El parámetro 'nombre' es requerido en el body." 
+        });
+    }
+
+    const sql = ` 
+        SELECT empcod, empnom, EMPDETCOD, EMPDETRAZ, EMPDETADM
+        FROM basdat.INEMP, basdat.inempdet 
+        WHERE empdetcod = empcod AND EMPNOM = :nombre
+    `;
+
+    try {
+
+        let result = await BD.Open(sql, [nombre], false);
+        
+        let entidad = [];
+
+        if (result && result.rows) {
+            result.rows.map(cite => {
+                let userSchema = {
+                    "EMPCOD": cite[0],
+                    "EMPNOM": cite[1],
+                    "EMPDETCOD": cite[2],
+                    "EMPDETRAZ": cite[3],
+                    "EMPDETADM": cite[4]
+                };
+                entidad.push(userSchema);
+            });
+        }
+
+        res.json(entidad);
+        
+    } catch (error) {
+        console.error("Error en la consulta /Entidad:", error);
+        res.status(500).json({ error: "Error Interno del Servidor" });
+    }
+});
+
 
 router.get('/evolucionesespecialistas', async (req, res) => {
     sql = `

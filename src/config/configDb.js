@@ -1,11 +1,17 @@
 const oracledb = require('oracledb');
-oracledb.initOracleClient({libDir:'C:\\OtrasAplicaciones\\instantclient_23_8'});
+oracledb.initOracleClient({libDir:'C:\\MisAplicaciones\\instantclient_23_5'});
 
 database = {
     user: "solo_lectura",
     password: "Temporal01",
     connectString: "192.168.10.101:1521/db1"
 }
+
+//database = {
+//    user: "basdat",
+//    password: "HCPRUEBAS11",
+//    connectString: "192.168.10.103:1521/db1"
+//}
 
 
 async function Open(sql, binds, autoCommit) {

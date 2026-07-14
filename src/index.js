@@ -7,6 +7,7 @@ const reportsRoutes = require('./routes/reportsRoutes');
 const signosVitalesRoutes = require('./routes/signosVitalesroutes');
 const pacientescirugiaRoutes = require('./routes/pacientesCirugiaRoutes');
 const citasMadreCanguro = require('./routes/citasMadreCanguro');
+const triageQuirurgicoRoutes = require('./routes/triageQuirurgico');
 
 //settings
 app.set('port', 3002);
@@ -20,7 +21,7 @@ app.use(reportsRoutes);
 app.use(signosVitalesRoutes);
 app.use(pacientescirugiaRoutes);
 app.use(citasMadreCanguro);
-
+app.use(triageQuirurgicoRoutes);
 //run
 app.listen(app.get('port'), () => {
     console.log('Server Reports Backend Servinte on Port 3002')
