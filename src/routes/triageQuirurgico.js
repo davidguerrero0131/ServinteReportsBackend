@@ -112,7 +112,7 @@ router.get('/TriageQuirurgico', async (req, res) => {
                 REGCLIFCH,          -- fila[4]
                 REGCLIFEG,          -- fila[5]
                 REGCLIRTF_LIMPIO    -- fila[6]
-            FROM V_TRIAGE_QUIRURGICO 
+            FROM BASDAT.V_TRIAGE_QUIRURGICO 
             WHERE REGCLIFEG BETWEEN TRUNC(SYSDATE) - 30 AND TRUNC(SYSDATE) + 1 
             ORDER BY REGCLIFEG DESC
         `;
@@ -141,7 +141,7 @@ router.get('/TriageQuirurgico', async (req, res) => {
         
     } catch (error) {
         console.error("Error obteniendo datos del Triage:", error);
-        res.status(500).json({ error: "Ocurrió un error al procesar la solicitud" });
+        res.status(500).json({ error: error.message || "Ocurrió un error al procesar la solicitud" });
     }
 });
 
