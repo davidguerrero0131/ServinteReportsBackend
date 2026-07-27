@@ -113,7 +113,7 @@ router.get('/TriageQuirurgico', async (req, res) => {
                 REGCLIFEG,          -- fila[5]
                 REGCLIRTF_LIMPIO    -- fila[6]
             FROM BASDAT.V_TRIAGE_QUIRURGICO
-            WHERE REGCLIFEG BETWEEN TRUNC(SYSDATE) - 30 AND TRUNC(SYSDATE) + 1 
+            WHERE REGCLIFEG BETWEEN TRUNC(SYSDATE) - 3 AND TRUNC(SYSDATE) + 1 
             ORDER BY REGCLIFEG DESC
         `;
 
