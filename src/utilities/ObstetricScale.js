@@ -1,5 +1,5 @@
 function validacionObstetricScale(signosVitales) {
-    obstetricScale =
+    const obstetricScale =
       validarSaturacionOxigeno(signosVitales.SO2, signosVitales.FIO2) +
       validarFIO2(signosVitales.FIO2) +
       validarFrecuenciaRespiratoria(signosVitales.frecuenciaRespiratoria) +
@@ -139,7 +139,7 @@ function validacionObstetricScale(signosVitales) {
   }
   
   function isAlerta(conciencia) {
-    alerta = "Alerta";
+    const alerta = "Alerta";
     let textConciancia = conciencia + "";
     if (conciencia == null || textConciancia.includes(alerta)) {
       return 0;

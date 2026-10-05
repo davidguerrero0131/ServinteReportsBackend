@@ -1,5 +1,5 @@
 function validacionNews2(signosVitales) {
-  news2 =
+  const news2 =
     validarSaturacionOxigeno(signosVitales.SO2, signosVitales.FIO2) +
     validarFIO2(signosVitales.FIO2) +
     validarFrecuenciaRespiratoria(signosVitales.frecuenciaRespiratoria) +
@@ -8,6 +8,7 @@ function validacionNews2(signosVitales) {
     validacionTemperatura(signosVitales.temperatura) +
     isAlerta(signosVitales.Conciencia);
 
+  if (process.env.DEBUG_NEWS2 === '1') {
   console.log(validarFrecuenciaRespiratoria(signosVitales.frecuenciaRespiratoria) + ' VALIDACION FRECUENCIA RESPIRATORIA-- \n'+ 
   validarFrecuenciaCardiaca(signosVitales.frecuenciaCardiaca) +' VALIDACION FRECUENCIA CARDIACA-- \n' + 
   valdarTensionArterial(signosVitales.sistolica) + ' VALIDACION TENSION ARTERIAL-- ' + signosVitales.sistolica + '\n' + 
@@ -19,6 +20,8 @@ function validacionNews2(signosVitales) {
   console.log(news2 + '-----------------------------------------------------------------------------------------');
   console.log(isAlerta(signosVitales.Conciencia) + "..... Conciencia -- " + " -- " + signosVitales.Conciencia);
   
+  }
+
   return news2;
 }
 
@@ -118,7 +121,7 @@ function valdarTensionArterial(tensionArterial) {
 }
 
 function isAlerta(conciencia) {
-  alerta = "Alerta";
+  const alerta = "Alerta";
   let textConciancia = conciencia + "";
   if (conciencia == null || textConciancia.includes(alerta)) {
     return 0;

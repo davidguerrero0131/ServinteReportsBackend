@@ -1,20 +1,21 @@
 {
   "name": "servintereportsbackend",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.1.0",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
   "author": "David Guerrero",
   "license": "ISC",
-  "description": "",
+  "description": "API de reportes sobre la base de datos de Servinte",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "morgan": "^1.10.0",
-    "nodemon": "^3.1.0",
-    "oracledb": "^6.9.0",
-    "servintereportsbackend": "file:"
+    "oracledb": "^6.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }

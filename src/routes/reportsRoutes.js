@@ -1,108 +1,62 @@
-const { Router, request } = require('express');
+const { Router } = require('express');
 const router = Router();
 const BD = require('../config/configDb');
+const asyncHandler = require('../utilities/asyncHandler');
 
-router.get('/EntidadPaciente/:id', async (req, res) => {
-    sql = ` select DISTINCT pacide, EMPCOD,EMPNOM, PACOTREMP
-    from basdat.abpac
-    inner join basdat.ABPACOTR on pacotrsec = pachis
-    inner join basdat.MSEMP on PACOTREMP = empcod
-    --inner join inempdet on  empcod=empdetcod
-    where  empact='S'
-    --carano ='2023' and movmes ='06'
-    and pachis
-     in (
-        '` + req.params['id'] + `') `;
+const mapEntidad = (rows) => (rows || []).map(cite => ({
+    "EMPCOD": cite[0],
+    "EMPNOM": cite[1],
+    "EMPDETCOD": cite[2],
+    "EMPDETRAZ": cite[3],
+    "EMPDETADM": cite[4]
+}));
 
-    let result = await BD.Open(sql, [], false);
-    Cites = [];
-    result.rows.map(cite => {
-        let userSchema = {
-            "PACIDE": cite[0],
-            "EMPCOD": cite[1],
-            "EMPNOM": cite[2],
-            "PACOTREMP": cite[3]
-        }
-        Cites.push(userSchema);
-    })
+router.get('/EntidadPaciente/:id', asyncHandler(async (req, res) => {
+    const sql = `select DISTINCT pacide, EMPCOD, EMPNOM, PACOTREMP
+                 from basdat.abpac
+                 inner join basdat.ABPACOTR on pacotrsec = pachis
+                 inner join basdat.MSEMP on PACOTREMP = empcod
+                 where empact = 'S'
+                   and pachis = :id`;
+    const result = await BD.Open(sql, { id: req.params.id }, false);
 
+    const cites = (result.rows || []).map(cite => ({
+        "PACIDE": cite[0],
+        "EMPCOD": cite[1],
+        "EMPNOM": cite[2],
+        "PACOTREMP": cite[3]
+    }));
+    res.json(cites);
+}));
 
-    res.json(Cites);
-})
+router.get('/Entidad/:nom', asyncHandler(async (req, res) => {
+    const sql = `SELECT empcod, empnom, EMPDETCOD, EMPDETRAZ, EMPDETADM
+                 FROM basdat.INEMP, basdat.inempdet
+                 where empdetcod = empcod AND EMPNOM = :nombre`;
+    const result = await BD.Open(sql, { nombre: req.params.nom }, false);
+    res.json(mapEntidad(result.rows));
+}));
 
-router.get('/Entidad/:nom', async (req, res) => {
-    sql = ` SELECT empcod, empnom, EMPDETCOD,EMPDETRAZ, EMPDETADM
-    FROM basdat.INEMP , basdat.inempdet 
-    where empdetcod=empcod AND EMPNOM = 
-        '` + req.params['nom'] + `' `;
-
-    let result = await BD.Open(sql, [], false);
-    entidad = [];
-    result.rows.map(cite => {
-        let userSchema = {
-            "EMPCOD": cite[0],
-            "EMPNOM": cite[1],
-            "EMPDETCOD": cite[2],
-            "EMPDETRAZ": cite[3],
-            "EMPDETADM": cite[4]
-        }
-        entidad.push(userSchema);
-    })
-
-
-    res.json(entidad);
-})
-
-
-
-router.post('/datosentidad', async (req, res) => {
-    
-
-    const { nombre } = req.body;
+router.post('/datosentidad', asyncHandler(async (req, res) => {
+    const { nombre } = req.body || {};
 
     if (!nombre) {
-        return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "El parámetro 'nombre' es requerido en el body." 
+        return res.status(400).json({
+            error: "Bad Request",
+            message: "El parámetro 'nombre' es requerido en el body."
         });
     }
 
-    const sql = ` 
-        SELECT empcod, empnom, EMPDETCOD, EMPDETRAZ, EMPDETADM
-        FROM basdat.INEMP, basdat.inempdet 
-        WHERE empdetcod = empcod AND EMPNOM = :nombre
-    `;
+    const sql = `SELECT empcod, empnom, EMPDETCOD, EMPDETRAZ, EMPDETADM
+                 FROM basdat.INEMP, basdat.inempdet
+                 WHERE empdetcod = empcod AND EMPNOM = :nombre`;
+    const result = await BD.Open(sql, { nombre }, false);
+    res.json(mapEntidad(result.rows));
+}));
 
-    try {
-
-        let result = await BD.Open(sql, [nombre], false);
-        
-        let entidad = [];
-
-        if (result && result.rows) {
-            result.rows.map(cite => {
-                let userSchema = {
-                    "EMPCOD": cite[0],
-                    "EMPNOM": cite[1],
-                    "EMPDETCOD": cite[2],
-                    "EMPDETRAZ": cite[3],
-                    "EMPDETADM": cite[4]
-                };
-                entidad.push(userSchema);
-            });
-        }
-
-        res.json(entidad);
-        
-    } catch (error) {
-        console.error("Error en la consulta /Entidad:", error);
-        res.status(500).json({ error: "Error Interno del Servidor" });
-    }
-});
-
-
-router.get('/evolucionesespecialistas', async (req, res) => {
-    sql = `
+router.get('/evolucionesespecialistas', asyncHandler(async (req, res) => {
+    // NOTA: el rango de fechas sigue fijo como en la versión original
+    const sql = `
     SELECT
       regexp_substr(regclirtf, '\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}', 1, 1) AS fecha_apertura,
       pactid,
@@ -132,40 +86,33 @@ router.get('/evolucionesespecialistas', async (req, res) => {
         )) BETWEEN 14 AND 18 THEN 'TARDE'
         ELSE 'NOCHE'
       END AS TURNO
-    FROM 
+    FROM
       basdat.HIEPIINA
       INNER JOIN basdat.HHREGCLI ON HIEPIINA.EPIINAEPI = HHREGCLI.REGCLIEPI
       INNER JOIN basdat.SIIDE ON HHREGCLI.REGCLIUSU = SIIDE.IDECOD
       INNER JOIN basdat.abpac ON pachis = epiinahis
       INNER JOIN basdat.inesp ON regcliesp = espcod
       INNER JOIN basdat.sipro ON regclipro = procod
-    WHERE 
+    WHERE
       HHREGCLI.REGCLIPRO IN ('chpevomed', 'chpevouci', 'chpeucievo', 'chpucidia')
       AND REGCLIFCH BETWEEN TO_DATE('01/04/2024', 'dd/mm/yyyy') AND TO_DATE('02/04/2024', 'dd/mm/yyyy') + 1
-  
     `;
-    let result = await BD.Open(sql, [], false);
-    Cites = [];
-    result.rows.map(cite => {
-        var clob_fecha_apertura = cite[0]._impl._parentObj;
-        console.log(clob_fecha_apertura);
+    const result = await BD.Open(sql, [], false);
 
-            let userSchema = {
-                "FECHA_APERTURA": cite[0],
-                "PACTID": cite[1],
-                "PACIDE": cite[2],
-                "HISTORIA": cite[3],
-                "NOM_ESPECIALISTA": cite[4],
-                "ESPNOM": cite[5],
-                "PROGRAMA": cite[6],
-                "FECHA_HORA_FIRMA": cite[7],
-                "TURNO": cite[8]
-            }
-            Cites.push(userSchema);
-    })
-    //console.log(Cites)
-    res.json(Cites);
-})
-
+    // Con fetchAsString = [CLOB] (configDb.js) cite[0] ya llega como texto;
+    // se eliminó el acceso a cite[0]._impl._parentObj que fallaba con valores nulos.
+    const cites = (result.rows || []).map(cite => ({
+        "FECHA_APERTURA": cite[0],
+        "PACTID": cite[1],
+        "PACIDE": cite[2],
+        "HISTORIA": cite[3],
+        "NOM_ESPECIALISTA": cite[4],
+        "ESPNOM": cite[5],
+        "PROGRAMA": cite[6],
+        "FECHA_HORA_FIRMA": cite[7],
+        "TURNO": cite[8]
+    }));
+    res.json(cites);
+}));
 
 module.exports = router;

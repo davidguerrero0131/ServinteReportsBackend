@@ -1,11 +1,13 @@
 const { Router } = require('express');
 const router = Router();
 const BD = require('../config/configDb');
+const asyncHandler = require('../utilities/asyncHandler');
 
 // ==========================================
 // FUNCIONES AUXILIARES DE PARSEO
 // ==========================================
 const extraerNumero = (texto) => {
+    if (typeof texto !== 'string') return undefined;
     const match = texto.match(/:\s*([\d.]+)/);
     return match ? Number(match[1]) : undefined;
 };
@@ -100,7 +102,7 @@ const parseTextoTriage = (texto) => {
 // ==========================================
 // RUTA DEL API
 // ==========================================
-router.get('/TriageQuirurgico', async (req, res) => {
+router.get('/TriageQuirurgico', asyncHandler(async (req, res) => {
     try {
         // En vez de *, definimos el orden para mapear con seguridad (fila[0], fila[1]...)
         let sql = `
@@ -122,7 +124,13 @@ router.get('/TriageQuirurgico', async (req, res) => {
 
         result.rows.map(fila => {
             // Pasamos el texto limpio a nuestra función transformadora
-            let triageEstructurado = parseTextoTriage(fila[6]);
+            let triageEstructurado;
+            try {
+                triageEstructurado = parseTextoTriage(fila[6]);
+            } catch (e) {
+                console.error(`[TRIAGE] Error parseando historia ${fila[0]}:`, e.message);
+                triageEstructurado = { condicionActual: {}, otrasConsideraciones: [], gasesArteriales: {}, errorParseo: true };
+            }
 
             let pacienteSchema = {
                 "PACHIS": fila[0],
@@ -143,6 +151,6 @@ router.get('/TriageQuirurgico', async (req, res) => {
         console.error("Error obteniendo datos del Triage:", error);
         res.status(500).json({ error: error.message || "Ocurrió un error al procesar la solicitud" });
     }
-});
+}));
 
 module.exports = router;
